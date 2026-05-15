@@ -50,20 +50,17 @@ renderCurrentScreen()
 
 input.onButtonPressed(Button.A, function () {
     if (inCutscene) { return }
-    basic.showIcon(IconNames.Heart)
     doAction()
 })
 
 input.onButtonPressed(Button.B, function () {
     if (inCutscene) { return }
-    basic.showArrow(ArrowNames.East)
     mode = (mode + 1) % 6
     renderCurrentScreen()
 })
 
 input.onButtonPressed(Button.AB, function () {
     if (inCutscene) { return }
-    basic.showIcon(IconNames.Yes)
     mode = 5
     renderCurrentScreen()
 })
@@ -328,12 +325,12 @@ function drawFill(x: number, y: number, w: number, h: number) {
 // Cat silhouette centered at (cx, ty). ~51px wide × 30px tall.
 // Eyes are dark pixels punched into the filled white head.
 function drawCat(cx: number, ty: number) {
-    drawFill(cx - 10, ty, 5, 8)             // left ear
-    drawFill(cx + 5, ty, 5, 8)              // right ear
-    drawFill(cx - 13, ty + 6, 26, 14)       // head
-    drawFill(cx - 7, ty + 19, 14, 12)       // body
-    drawFill(cx - 25, ty + 16, 18, 10)      // left wing
-    drawFill(cx + 7, ty + 16, 18, 10)       // right wing
+    drawFill(cx - 10, ty, 5, 8)                      // left ear (5 calls)
+    drawFill(cx + 5, ty, 5, 8)                       // right ear (5 calls)
+    drawFill(cx - 13, ty + 6, 26, 14)                // head (14 calls)
+    OLED12864_I2C.filledCircle(cx, ty + 25, 7, 1)   // body — was 12 hlines
+    drawFill(cx - 25, ty + 16, 18, 10)               // left wing (10 calls)
+    drawFill(cx + 7, ty + 16, 18, 10)                // right wing (10 calls)
     // Dark eyes (color=0 clears pixels within the filled head)
     OLED12864_I2C.pixel(cx - 5, ty + 11, 0)
     OLED12864_I2C.pixel(cx - 4, ty + 11, 0)
@@ -347,8 +344,8 @@ function drawCat(cx: number, ty: number) {
 
 // Filled heart, ~12px wide × 12px tall, top-left at (x, y)
 function drawHeart(x: number, y: number) {
-    drawFill(x + 1, y, 4, 4)         // left bump
-    drawFill(x + 7, y, 4, 4)         // right bump
+    OLED12864_I2C.filledCircle(x + 3, y + 2, 3, 1)  // left bump — was 4 hlines
+    OLED12864_I2C.filledCircle(x + 9, y + 2, 3, 1)  // right bump — was 4 hlines
     drawFill(x, y + 3, 12, 5)        // main body
     drawFill(x + 1, y + 8, 10, 2)    // lower taper
     drawFill(x + 3, y + 10, 6, 1)    // narrow
@@ -366,8 +363,8 @@ function drawFish(x: number, y: number) {
 
 // Cloud, ~16px wide × 9px tall, centered at (cx, ty)
 function drawCloud(cx: number, ty: number) {
-    drawFill(cx - 8, ty + 4, 16, 5)  // base
-    drawFill(cx - 5, ty, 10, 7)      // dome
+    drawFill(cx - 8, ty + 4, 16, 5)              // base
+    OLED12864_I2C.filledCircle(cx, ty + 4, 5, 1) // dome — was 7 hlines
 }
 
 // 4-point sparkle, center at (cx, cy)
@@ -380,10 +377,9 @@ function drawSparkle(cx: number, cy: number) {
     OLED12864_I2C.pixel(cx + 2, cy + 2, 1)
 }
 
-// Ball (circle approx), ~10px wide × 10px tall, top-left at (x, y)
+// Ball, ~10px wide × 10px tall, center at (x+5, y+5)
 function drawBall(x: number, y: number) {
-    drawFill(x + 1, y, 8, 10)
-    drawFill(x, y + 1, 10, 8)
+    OLED12864_I2C.filledCircle(x + 5, y + 5, 5, 1)  // was ~20 hlines
 }
 
 // Stat bar: text label + outlined filled bar
